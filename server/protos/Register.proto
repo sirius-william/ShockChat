@@ -1,0 +1,24 @@
+syntax = "proto3";
+package protos;
+
+
+/*  id：     0x200
+ *  发送者：  客户端
+ *  接受者：  服务端
+ *  用途：   用户的注册信息，各字段均需要RSA加密，序列化后再进行一次RSA加密
+ */
+message UserRegisterInfo {
+  bytes password = 1;  // 密码，RSA加密
+  bytes tel = 2; // 电话，RSA加密
+  bytes name = 3; // 昵称，RSA加密
+  bytes email = 4; // 邮箱，RSA加密
+}
+
+/*  id：     0x201
+ *  发送者：  服务端
+ *  接受者：  客户端
+ *  用途：   携带注册结果（id）
+ */
+message UserId {
+  int64 id = 1; // 用户申请的id号码
+}

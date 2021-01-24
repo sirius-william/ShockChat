@@ -1,0 +1,22 @@
+syntax = "proto3";
+package protos;
+
+/*  id：     0x101
+ *  发送者：  服务端
+ *  接受者：  客户端
+ *  用途：   携带随机盐值，发送个客户端进行指定猜谜的计算
+ */
+message LegalCheckSalt {
+  string salt = 1;
+}
+
+/*  id：     0x102
+ *  发送者：  客户端
+ *  接受者：  服务端
+ *  用途：   携带猜谜后得出的结果，用于与服务端计算的结果比对
+ */
+message LegalCheckResult {
+  string result = 1;
+}
+
+

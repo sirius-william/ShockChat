@@ -1,0 +1,12 @@
+syntax = "proto3";
+package protos;
+
+/*  id：     0x103
+ *  发送者：  both
+ *  接受者：  both
+ *  用途：   携带响应结果
+ */
+message Status {
+  bool status = 1;
+  string error = 2;
+}

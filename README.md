@@ -51,7 +51,25 @@
 
     客户端使用Qt5来编写GUI，服务端使用go语言，因为go语言操作数据库比较方便，体量小，高并发多线程处理比较强悍。如果有可能，会考虑Qt6。
 
-# 进度
-  + 【2021-01-20】 基本框架进行中
+# 使用
+## 服务端
+### 依赖： 
+
+go语言环境，protobuf环境（protoc和go的插件），mysql，redis，openssl。
+
+用到的第三方库：Zinx框架，color库，其具体已写在go.mod文件中。
+### 说明：
+zinx框架内有很多不必要的fmt.Println语句用于控制台输出，建议根据需求自行修改框架源码。
+
+服务端源代码集成了日志模块，而不使用zinx框架内的日志模块，可实现彩色输出。
+
+测试框架使用goconvey，在test目录内运行 go test，可进行RSA加密解密测试，生成的公钥私钥可直接使用。
+
+在使用之前，请使用openssl生成PKSC#8的公钥与私钥，文件名称要与zinx.json中定义的名称相同，秘钥长度推荐为2048字节。密钥位置与zinx.json中的位置相同。
+
+```shell
+openssl genrsa -out private.pem 2048 # 私钥
+openssl rsa -in private.pem -pubout -out public.pem # 根据私钥生成公钥
+```
 
 [Zinx框架]: https://github.com/aceld/zinx
