@@ -1,3 +1,4 @@
 /server/ShockChatServer.exe
 /.idea
 /server/conf/zinx.xml
+*.exe
