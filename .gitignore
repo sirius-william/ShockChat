@@ -2,3 +2,4 @@
 /.idea
 /server/conf/zinx.xml
 *.exe
+*.pem

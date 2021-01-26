@@ -25,11 +25,11 @@ type Logger struct {
 	配置文件读取
 */
 type LoggerConfig struct {
-	LogDir       string
-	LogFileName  string
-	LogLevel     int
-	LogToConsole bool
-	LogToFile    bool
+	LogDir       string `json:"log.dir"`
+	LogFileName  string `json:"log.file.name"`
+	LogLevel     int    `json:"log.level"`
+	LogToConsole bool   `json:"log.toConsole"`
+	LogToFile    bool   `json:"log.toFile"`
 }
 
 var LogConf LoggerConfig = LoggerConfig{}
@@ -52,8 +52,9 @@ func init() {
 		}
 	}
 }
+
 // 检查日志文件是否存在
-func checkFile(){
+func checkFile() {
 	var file *os.File
 	var err error
 	filePath := LogConf.LogDir + "\\" + LogConf.LogFileName
@@ -69,6 +70,7 @@ func checkFile(){
 	// 关闭文件，不使用这个句柄，而用OpenFile的追加模式
 	file.Close()
 }
+
 /*
 ALL 最低等级的，用于打开所有日志记录。
 

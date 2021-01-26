@@ -12,14 +12,19 @@ import (
 
 /*
  * 在连接断开销毁时，将id的映射关系从容器中删除
-*/
-func AfterConnectionStopped(conn ziface.IConnection){
+ */
+func AfterConnectionStopped(conn ziface.IConnection) {
 	pro, err := conn.GetProperty("id")
 	if err != nil {
-		fmt.Println("connected stoped")
+		fmt.Println(err)
 		return
 	}
 	id := pro.(int64)
 	delete(utils.ConnectionIdReflectorZinxConnID, id)
-	fmt.Println("connected stoped")
+	fmt.Println("connected stopped")
+	utils.TimerPool[conn.GetConnID()] <- true
+}
+
+func ConnStart(conn ziface.IConnection) {
+
 }

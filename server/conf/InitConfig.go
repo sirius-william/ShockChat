@@ -10,6 +10,7 @@ package conf
 import (
 	"ShockChatServer/utils"
 	"ShockChatServer/utils/mysql"
+	uredis "ShockChatServer/utils/redis"
 	"encoding/json"
 	"github.com/fatih/color"
 	"io/ioutil"
@@ -31,8 +32,8 @@ var Logo string = `
 var Copyright string = "[Github] https://github.com/aceld"
 
 type PrintConfig struct {
-	ShowLogo      bool
-	ShowCopyright bool
+	ShowLogo      bool `json:"show.logo"`
+	ShowCopyright bool `json:"show.copyright"`
 }
 
 // 存储关于logo和版权的配置信息
@@ -57,11 +58,18 @@ func init() {
 	}
 	// 读配置文件
 	conf, err := ioutil.ReadFile(pwd + "/conf/zinx.json")
-	// 将其中的logo和版权配置、mysql、RSA配置反序列化到结构体
+	// 反序列化到结构体变量
 	if err == nil {
 		_ = json.Unmarshal(conf, &PrintConf)
-		_ = json.Unmarshal(conf, &mysql.MysqlConfig)
+		_ = json.Unmarshal(conf, &mysql.MysqlConf)
 		_ = json.Unmarshal(conf, &utils.KeyFile)
+		_ = json.Unmarshal(conf, &utils.TokenConf)
+		_ = json.Unmarshal(conf, &utils.EmailConf)
+		_ = json.Unmarshal(conf, &uredis.RedisConf)
+		// 初始化redis连接池
+		uredis.RedisPool = uredis.InitRedisPool()
+		utils.InitVars()
+		mysql.InitMySqlPool()
 	}
 	// 显示
 	if PrintConf.ShowLogo {
@@ -70,5 +78,4 @@ func init() {
 	if PrintConf.ShowCopyright {
 		color.HiBlue(Copyright)
 	}
-
 }

@@ -9,7 +9,7 @@ package utils
  */
 var ConnectionIdReflectorZinxConnID map[int64]int32
 
-func init() {
+func InitVars() {
 	// 初始化Global中，用户id和connId的对于关系的容器
 	ConnectionIdReflectorZinxConnID = make(map[int64]int32)
 }
