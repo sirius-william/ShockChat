@@ -75,7 +75,7 @@ func Exec(cmd string, args ...interface{}) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	var resList []string
+	var resList []string = make([]string, 1)
 	if value, ok := res.([]byte); ok {
 		resList = append(resList, string(value))
 	}

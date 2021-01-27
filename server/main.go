@@ -12,7 +12,7 @@ func main() {
 	server.AddRouter(0x100, &router.LegalCheckSaltRouter{})
 	server.AddRouter(0x102, &router.SaltCheck{})
 	server.AddRouter(0x200, &router.RegisterRouter{})
+	server.AddRouter(0x300, &router.LoginRouter{})
 	server.SetOnConnStop(hook.AfterConnectionStopped)
-	server.SetOnConnStart(hook.ConnStart)
 	server.Serve()
 }

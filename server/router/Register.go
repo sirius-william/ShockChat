@@ -23,6 +23,9 @@ type RegisterRouter struct {
 }
 
 func (r *RegisterRouter) Handle(req ziface.IRequest) {
+	if LegalCheck(req) == false {
+		return
+	}
 	registerInfo := protos.UserRegisterInfo{}
 	status := protos.Status{}
 	data := req.GetData()

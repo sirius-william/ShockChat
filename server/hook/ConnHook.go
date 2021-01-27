@@ -6,6 +6,7 @@ package hook
 
 import (
 	"ShockChatServer/utils"
+	"ShockChatServer/utils/redis"
 	"fmt"
 	"github.com/aceld/zinx/ziface"
 )
@@ -19,12 +20,7 @@ func AfterConnectionStopped(conn ziface.IConnection) {
 		fmt.Println(err)
 		return
 	}
-	id := pro.(int64)
+	id := pro.(int32)
 	delete(utils.ConnectionIdReflectorZinxConnID, id)
-	fmt.Println("connected stopped")
-	utils.TimerPool[conn.GetConnID()] <- true
-}
-
-func ConnStart(conn ziface.IConnection) {
-
+	_, _ = redis.Exec("hdel", "token", pro)
 }

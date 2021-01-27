@@ -79,7 +79,7 @@
         </td>
     </tr>
     <tr align="center" bgcolor="#92B4F4">
-            <td rowspan="4">
+            <td rowspan="2">
                 <span style="color: #CFDEE7; ">用户注册</span>
             </td>
             <td>
@@ -109,6 +109,38 @@
                 <span style="color: #CFDEE7; ">Register.proto</span>
             </td>
         </tr>
+    <tr align="center" bgcolor="#92B4F4">
+            <td rowspan="4">
+                <span style="color: #CFDEE7; ">用户登录</span>
+            </td>
+            <td>
+                <span style="color: #CFDEE7; ">0x300</span>
+            </td>
+            <td>
+                <span style="color: #CFDEE7; ">客户端</span>
+            </td>
+            <td>
+                <span style="color: #CFDEE7; ">请求登录，携带：userid，密码RSA加密</span>
+            </td>
+            <td>
+                <span style="color: #CFDEE7; ">User.proto</span>
+            </td>
+        </tr>
+    <tr align="center" bgcolor="#92B4F4">
+            <td>
+                <span style="color: #CFDEE7; ">0x301</span>
+            </td>
+            <td>
+                <span style="color: #CFDEE7; ">服务端</span>
+            </td>
+            <td>
+                <span style="color: #CFDEE7; ">登陆成功，携带：Token</span>
+            </td>
+            <td>
+                <span style="color: #CFDEE7; ">User.proto</span>
+            </td>
+        </tr>
 </table>
+
 
 

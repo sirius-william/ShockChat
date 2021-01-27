@@ -78,4 +78,9 @@ func init() {
 	if PrintConf.ShowCopyright {
 		color.HiBlue(Copyright)
 	}
+	if err == nil {
+		color.Green("finding config file:%s, Unmarshall successfully.", pwd+"/conf/zinx.json")
+	} else {
+		color.Green("Didn't found config file, using default config.")
+	}
 }

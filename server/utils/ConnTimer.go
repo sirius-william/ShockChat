@@ -30,10 +30,13 @@ func StartTimerOfSendingToken(user *protos.UserLogin, conn ziface.IConnection) {
 				}
 			case <-timer.C:
 				{
-					token := CreateToken(user)
+					token, err := CreateToken(user)
+					if err != nil {
+						fmt.Println(err)
+					}
 					// 将新生成的token写入redis数据库
 					_, _ = redis.Exec("hset", "tokens", user.Id, token)
-					err := conn.SendMsg(0x301, []byte(token))
+					err = conn.SendMsg(0x301, []byte(token))
 					if err != nil {
 						fmt.Println(err)
 					}

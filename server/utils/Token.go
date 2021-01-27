@@ -6,8 +6,10 @@ package utils
 
 import (
 	"ShockChatServer/protos"
+	"ShockChatServer/utils/redis"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
+	"strconv"
 	"time"
 )
 
@@ -29,7 +31,7 @@ var TokenConf = TokenConfig{"secretKey", 30}
  * user：根据用户登录信息来生成
  * 说明：客户端发送心跳包，来获取token
  */
-func CreateToken(user *protos.UserLogin) string {
+func CreateToken(user *protos.UserLogin) (string, error) {
 	var res string
 	// 将用户登录信息（未RSA解密）写入claim内来生成Token
 	userTokenClaim := &tokenClaim{
@@ -42,11 +44,26 @@ func CreateToken(user *protos.UserLogin) string {
 	// 生成token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, userTokenClaim)
 	// 加入密钥
-	res, err := token.SignedString(TokenConf.SecretKey)
+	key := TokenConf.SecretKey
+	res, err := token.SignedString([]byte(key))
 	if err != nil {
-		fmt.Println(err)
-		return ""
+		fmt.Println("token error:", err)
+		return "", err
 	}
-	fmt.Println(res)
-	return res
+	// 写入redis
+	_, err = redis.Exec("hset", "token", strconv.Itoa(int(user.Id)), res)
+	if err != nil {
+		return "", err
+	}
+	return res, nil
+}
+
+func TokenCheck(userid string, token string) bool {
+	redisFind, err := redis.Exec("hget", "token", userid)
+	if len(redisFind) == 1 && err != nil {
+		if redisFind[0] == token {
+			return true
+		}
+	}
+	return false
 }

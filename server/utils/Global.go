@@ -7,9 +7,9 @@ package utils
 /*
  * 用于存储用户id和connId的映射关系，用户发消息时使用
  */
-var ConnectionIdReflectorZinxConnID map[int64]int32
+var ConnectionIdReflectorZinxConnID map[int32]int32
 
 func InitVars() {
 	// 初始化Global中，用户id和connId的对于关系的容器
-	ConnectionIdReflectorZinxConnID = make(map[int64]int32)
+	ConnectionIdReflectorZinxConnID = make(map[int32]int32)
 }
