@@ -78,7 +78,10 @@ func (br *SaltCheck) Handle(req ziface.IRequest) {
 	} else {
 		res.Status = false
 		res.Error = serverCalculated.(string)
+		resSend, _ = proto.Marshal(&res)
+		_ = req.GetConnection().SendMsg(0x103, resSend)
 		req.GetConnection().Stop()
+		return
 	}
 	resSend, _ = proto.Marshal(&res)
 	_ = req.GetConnection().SendMsg(0x103, resSend)
@@ -89,9 +92,13 @@ func (br *SaltCheck) Handle(req ziface.IRequest) {
  */
 func LegalCheck(req ziface.IRequest) bool {
 	legal, err := req.GetConnection().GetProperty("checked")
+	var status protos.Status
 	if err != nil || legal.(bool) != true {
 		// 关闭非法连接
-		_ = req.GetConnection().SendMsg(0x103, []byte("illegal connection"))
+		status.Error = "illegal connection"
+		status.Status = false
+		statusSend, _ := proto.Marshal(&status)
+		_ = req.GetConnection().SendMsg(0x103, statusSend)
 		req.GetConnection().Stop()
 		return false
 	}

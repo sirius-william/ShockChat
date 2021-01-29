@@ -24,6 +24,8 @@ func (br *LoginRouter) Handle(req ziface.IRequest) {
 	}
 	data := req.GetData()
 	var userLoginInfo protos.UserLogin
+	var status protos.Status
+	var statusSend []byte
 	err := proto.Unmarshal(data, &userLoginInfo)
 	if err != nil {
 		_ = req.GetConnection().SendMsg(0x103, []byte("server error"))
@@ -34,7 +36,10 @@ func (br *LoginRouter) Handle(req ziface.IRequest) {
 	// 检查用户是否已经登录
 	_, ok := utils.ConnectionIdReflectorZinxConnID[id]
 	if ok {
-		_ = req.GetConnection().SendMsg(0x103, []byte("you have login."))
+		status.Error = "you have login."
+		status.Status = false
+		statusSend, _ = proto.Marshal(&status)
+		_ = req.GetConnection().SendMsg(0x103, statusSend)
 		return
 	}
 	// 拿到密码，并解密
@@ -60,13 +65,19 @@ func (br *LoginRouter) Handle(req ziface.IRequest) {
 	}
 	if err != nil {
 		_ = tx.Rollback()
-		_ = req.GetConnection().SendMsg(0x103, []byte("server error"))
+		status.Error = "server error"
+		status.Status = false
+		statusSend, _ = proto.Marshal(&status)
+		_ = req.GetConnection().SendMsg(0x103, statusSend)
 		return
 	}
 	if resId == int(id) && resPassword == pwdMd5 {
 		token, err := utils.CreateToken(&userLoginInfo)
 		if err != nil {
-			_ = req.GetConnection().SendMsg(0x103, []byte(err.Error()))
+			status.Error = err.Error()
+			status.Status = false
+			statusSend, _ = proto.Marshal(&status)
+			_ = req.GetConnection().SendMsg(0x103, statusSend)
 			_ = tx.Rollback()
 			return
 		}
@@ -82,6 +93,9 @@ func (br *LoginRouter) Handle(req ziface.IRequest) {
 		req.GetConnection().SetProperty("id", id)
 	} else {
 		// id或密码不匹配
-		err = req.GetConnection().SendMsg(0x103, []byte("id or password increated."))
+		status.Error = "id or password increated."
+		status.Status = false
+		statusSend, _ = proto.Marshal(&status)
+		err = req.GetConnection().SendMsg(0x103, statusSend)
 	}
 }
