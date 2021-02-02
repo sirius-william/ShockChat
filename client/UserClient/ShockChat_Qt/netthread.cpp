@@ -3,6 +3,7 @@
 #include "Message.hpp"
 #include "protos/token.pb.h"
 #include "protos/Register.pb.h"
+#include "crypto.h"
 #include <QCryptographicHash>
 NetThread::NetThread(QObject *parent) : QObject(parent) {
 
@@ -99,7 +100,7 @@ void NetThread::init()
         case 0x201:{
             protos::UserId id;
             id.ParseFromArray(data, data.size());
-            emit getIdSignal(QString::number(id.id()));
+            emit getIdSignal(true, QString::number(id.id()));
         }
         }
     });
@@ -120,10 +121,30 @@ void NetThread::SocketConnect(){
 
 void NetThread::registerSlot(QString username, QString password, QString tel, QString mail)
 {
-
+    protos::UserRegisterInfo info;
+    std::string username_str = Encrypto(PUBLIC_KEY, username.toStdString());
+    std::string password_str = Encrypto(PUBLIC_KEY, password.toStdString());
+    std::string tel_str = Encrypto(PUBLIC_KEY, tel.toStdString());
+    std::string mail_str = Encrypto(PUBLIC_KEY, mail.toStdString());
+    info.set_name(username_str);
+    info.set_tel(tel_str);
+    info.set_password(password_str);
+    info.set_email(mail_str);
+    QByteArray send = QByteArray(info.ByteSizeLong(), 0);
+    info.SerializePartialToArray(send.data(), info.ByteSizeLong());
+    this->socket->write(packMsg(0x200, send));
+    if(!this->socket->waitForBytesWritten(TIME_OUT)){
+        emit serverError("server error");
+    }
 }
 
 void NetThread::loginSlot(QString id, QString password)
 {
-
+    protos::UserLogin login;
+    login.set_id(id.toInt());
+    std::string password_str = Encrypto(PUBLIC_KEY, password.toStdString());
+    login.set_password(password_str);
+    QByteArray send = QByteArray(login.ByteSizeLong(), 0);
+    login.SerializePartialToArray(send.data(), login.ByteSizeLong());
+    this->socket->write(packMsg(0x300, send));
 }

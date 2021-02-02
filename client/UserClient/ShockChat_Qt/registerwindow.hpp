@@ -14,7 +14,10 @@ class RegisterWindow : public QDialog
 public:
     explicit RegisterWindow(QWidget *parent = nullptr);
     ~RegisterWindow();
-
+signals:
+    void registerSignal(QString username, QString password, QString tel, QString email);
+public slots:
+    void getRegisterStatus(bool status, QString errorOrUserId);
 private:
     Ui::RegisterWindow *ui;
 };

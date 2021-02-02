@@ -35,7 +35,7 @@ signals:
     // 拿到了token
     void getTokenSignal(QString token);
     // 注册用户时拿到了id
-    void getIdSignal(QString id);
+    void getIdSignal(bool status, QString id);
     // socket断开
     void socketDisConnectSignal();
 public slots:

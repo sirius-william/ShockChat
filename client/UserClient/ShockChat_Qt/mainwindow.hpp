@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "protos/Normal.pb.h"
 #include "netthread.hpp"
+#include "registerwindow.hpp"
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -21,6 +22,7 @@ public:
 signals:
     void initNetThreadSignal();
     void initNetThreadSocket();
+    void wantToLogin(QString id, QString password);
 public slots:
     void get0x103Msg(bool status, QString err);
     void get0x201Msg(QString id);
@@ -32,5 +34,6 @@ public slots:
 private:
     Ui::MainWindow *ui;
     QString token;
+    RegisterWindow* registerWindow;
 };
 #endif // MAINWINDOW_HPP

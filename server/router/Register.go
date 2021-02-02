@@ -68,7 +68,7 @@ func (r *RegisterRouter) Handle(req ziface.IRequest) {
 		 * 以上可知，此查询语句走辅助索引idx_status，且不需要回表。锁：由for update加行级锁（因为走了索引，所以不是表锁），对查询到的行加写锁，禁止读。
 		 * 行写锁有效保证了并发性能。
 	*/
-	row := tx.QueryRow("select id from tb_user_id where status = 1 limit 1 for update;")
+	row := tx.QueryRow("select id from tb_user_id where status = 1 limit 1 for update skip locked;")
 	var id int
 	err = row.Scan(&id)
 	if err != nil {

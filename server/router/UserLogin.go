@@ -93,7 +93,7 @@ func (br *LoginRouter) Handle(req ziface.IRequest) {
 		req.GetConnection().SetProperty("id", id)
 	} else {
 		// id或密码不匹配
-		status.Error = "id or password increated."
+		status.Error = "id or password incorrect."
 		status.Status = false
 		statusSend, _ = proto.Marshal(&status)
 		err = req.GetConnection().SendMsg(0x103, statusSend)

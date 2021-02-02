@@ -55,6 +55,8 @@ set(PROJECT_SOURCES
 add_definitions(-DHOST="127.0.0.1")
 add_definitions(-DPORT=8999)
 add_definitions(-DTIME_OUT=800000)
+# 公钥
+add_definitions(-DPUBLIC_KEY="public.pem")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(ShockChat_Qt
