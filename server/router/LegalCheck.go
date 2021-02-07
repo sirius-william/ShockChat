@@ -5,39 +5,56 @@
 package router
 
 import (
+	"ShockChatServer/logger"
 	"ShockChatServer/protos"
 	"ShockChatServer/utils"
 	"github.com/aceld/zinx/ziface"
 	"github.com/aceld/zinx/znet"
 	"github.com/golang/protobuf/proto"
-	"math/rand"
-	"strconv"
-	"time"
 )
 
 /*
  * id: 0x100
+ * 描述：客户端请求验证连接合法性
  */
 type LegalCheckSaltRouter struct {
 	znet.BaseRouter
 }
 
 func (br *LegalCheckSaltRouter) Handle(req ziface.IRequest) {
-	// 验证消息格式，此消息只包含报头，没有包体
-	if len(req.GetData()) != 0 {
-		err := protos.Status{Status: false, Error: "invalid request"}
-		errSend, _ := proto.Marshal(&err)
-		_ = req.GetConnection().SendMsg(0x103, errSend)
+	var data []byte = req.GetData()
+	// 这个消息必须为空
+	if len(data) != 0 {
 		return
 	}
-	// 重置随机数种子，后获取一个随机1000~2000整数
-	rand.Seed(time.Now().Unix())
-	salt := rand.Intn(9999) + 1000
-	var saltSend = protos.LegalCheckSalt{Salt: strconv.Itoa(salt)}
-	saltByte, _ := proto.Marshal(&saltSend)
-	//saltRSA, _ := RSA.Encrypt(saltByte, "public.pem")
+	// 拿到盐值
+	var salt string = utils.GetSalt()
+	// 计算谜语并写入属性
 	utils.Riddle(salt, req)
-	_ = req.GetConnection().SendMsg(0x101, saltByte)
+	// 写入响应体
+	var respond protos.LegalCheckSalt = protos.LegalCheckSalt{Salt: salt}
+	var err error
+	var send []byte
+	// 序列化
+	send, err = proto.Marshal(&respond)
+	if err != nil {
+		// 发生错误，响应server error
+		var status protos.Status = protos.Status{}
+		status.Status = false
+		status.Message = "server error"
+		logger.Log.Error(err.Error())
+		send, _ = proto.Marshal(&status)
+		err = req.GetConnection().SendMsg(0x000, send)
+		if err != nil {
+			logger.Log.Error(err.Error())
+		}
+		return
+	}
+	// 发送盐值响应体给客户端
+	err = req.GetConnection().SendMsg(0x101, send)
+	if err != nil {
+		logger.Log.Error(err.Error())
+	}
 }
 
 /*
@@ -48,59 +65,59 @@ type SaltCheck struct {
 }
 
 func (br *SaltCheck) Handle(req ziface.IRequest) {
-	res := protos.Status{}
-	var resSend []byte
-	// 拿到数据包
-	data := req.GetData()
-	// 反序列化拿到客户端猜谜结果
-	salt := protos.LegalCheckResult{}
-	err := proto.Unmarshal(data, &salt)
-	// 是否解析成功，未成功则返回
-	if err != nil {
-		res.Status = false
-		res.Error = "invalid request"
-		resSend, _ = proto.Marshal(&res)
-		_ = req.GetConnection().SendMsg(0x103, resSend)
+	var data []byte = req.GetData()
+	if len(data) == 0 {
 		return
 	}
-	// 拿到之前服务器这边的猜谜结果
-	serverCalculated, err := req.GetConnection().GetProperty("legal_check")
-	// 如果：1）发现没有猜谜，即发现并没有之前的获取盐值操作，返回错误的结果给客户端
-	// 2）发现对比正确，返回正确给客户端，并将checked=true写入连接属性，用于后续通信，也防止了反复验证
-	// 3) 猜谜错误，视为非法连接，将连接关闭并清除
+	var respondFromUser protos.LegalCheckResult
+	var err error
+	var send []byte
+	var checkRes protos.LegalCheckStatus
+	err = proto.Unmarshal(data, &respondFromUser)
 	if err != nil {
-		res.Status = false
-		res.Error = "server error"
-	} else if serverCalculated.(string) == salt.GetResult() {
-		res.Status = true
-		res.Error = ""
+		checkRes.Status = -1
+		checkRes.Error = "server error"
+		logger.Log.Error(err.Error())
+		send, err = proto.Marshal(&checkRes)
+		if err != nil {
+			logger.Log.Error(err.Error())
+			return
+		}
+		err = req.GetConnection().SendMsg(0x103, send)
+		if err != nil {
+			logger.Log.Error(err.Error())
+			return
+		}
+	}
+	// 拿到之前存储的计算好的谜题结果
+	riddle, err := req.GetConnection().GetProperty("salt")
+	if err != nil {
+		return
+	}
+	// 对比
+	if riddle.(string) == respondFromUser.Result {
+		checkRes.Status = 1
+		checkRes.Error = ""
 		req.GetConnection().SetProperty("checked", true)
 	} else {
-		res.Status = false
-		res.Error = serverCalculated.(string)
-		resSend, _ = proto.Marshal(&res)
-		_ = req.GetConnection().SendMsg(0x103, resSend)
-		req.GetConnection().Stop()
+		checkRes.Status = 0
+		checkRes.Error = "check incorrect"
+	}
+	send, err = proto.Marshal(&checkRes)
+	if err != nil {
+		logger.Log.Error(err.Error())
 		return
 	}
-	resSend, _ = proto.Marshal(&res)
-	_ = req.GetConnection().SendMsg(0x103, resSend)
+	err = req.GetConnection().SendMsg(0x103, send)
+	req.GetConnection().RemoveProperty("salt")
 }
 
-/*
- * 合法性检查，如果非法，关闭连接，返回false，该函数执行后，若为false，一般禁止对连接进行再次操作，因为连接关闭了。
- */
-func LegalCheck(req ziface.IRequest) bool {
-	legal, err := req.GetConnection().GetProperty("checked")
-	var status protos.Status
-	if err != nil || legal.(bool) != true {
-		// 关闭非法连接
-		status.Error = "illegal connection"
-		status.Status = false
-		statusSend, _ := proto.Marshal(&status)
-		_ = req.GetConnection().SendMsg(0x103, statusSend)
-		req.GetConnection().Stop()
-		return false
+func IsLegal(req ziface.IRequest) bool {
+	checked, err := req.GetConnection().GetProperty("checked")
+	if checked != nil && err != nil {
+		if checked.(bool) == true {
+			return true
+		}
 	}
-	return true
+	return false
 }

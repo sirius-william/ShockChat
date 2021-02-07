@@ -2,8 +2,10 @@ syntax = "proto3";
 package protos;
 
 /*
- * 消息类型：0x301
+ * 消息类型：0x301，错误返回status=-1
 */
 message Token {
-  bytes token = 1;
+  int32 status = 1;
+  bytes token = 2;
+  string error = 3;
 }

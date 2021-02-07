@@ -9,7 +9,7 @@
   "MaxWorkerTaskLen": 1024,
   "MaxMsgChanLen": 1024,
   "log.dir": "D:/logger/ShockChat2",
-  "log.fileName": "/log2.txt",
+  "log.file.name": "/log2.txt",
   "log.level": 1,
   "log.console": true,
   "log.file": true,

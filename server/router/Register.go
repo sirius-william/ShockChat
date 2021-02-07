@@ -5,12 +5,12 @@
 package router
 
 import (
+	"ShockChatServer/logger"
 	"ShockChatServer/protos"
 	"ShockChatServer/utils"
 	"ShockChatServer/utils/mysql"
 	"github.com/aceld/zinx/ziface"
 	"github.com/aceld/zinx/znet"
-	"github.com/fatih/color"
 	"github.com/golang/protobuf/proto"
 )
 
@@ -23,23 +23,21 @@ type RegisterRouter struct {
 }
 
 func (r *RegisterRouter) Handle(req ziface.IRequest) {
-	if LegalCheck(req) == false {
+	if !IsLegal(req) {
+		// 非法连接，断开
+		req.GetConnection().Stop()
 		return
 	}
 	registerInfo := protos.UserRegisterInfo{}
-	status := protos.Status{}
 	data := req.GetData()
 	if len(data) == 0 {
 		req.GetConnection().Stop()
 		return
 	}
+	// 解析
 	err := proto.Unmarshal(data, &registerInfo)
 	if err != nil {
-		status.Status = false
-		status.Error = "server error."
-		statusSend, _ := proto.Marshal(&status)
-		_ = req.GetConnection().SendMsg(0x103, statusSend)
-		color.Red("%s", err)
+		logger.Log.Error(err.Error())
 		return
 	}
 	userNameBytes, _ := utils.Decrypt(registerInfo.Name, utils.KeyFile.PrivateKeyFilePath)
@@ -50,71 +48,20 @@ func (r *RegisterRouter) Handle(req ziface.IRequest) {
 	password := string(passwordBytes)
 	tel := string(telBytes)
 	email := string(emailBytes)
-	// 开始操作数据库
-	// 开始事务
-	tx, err := mysql.Mysql.Begin()
-	if err != nil {
-		color.Red(err.Error())
-		return
-	}
-	// 拿到一个空闲的id
-	/*
-		 * SQL说明：该查询语句的执行策略如下
-		+----+-------------+------------+------------+------+---------------+------------+---------+-------+------+----------+--------------------------+
-		| id | select_type | table      | partitions | type | possible_keys | key        | key_len | ref   | rows | filtered | Extra                    |
-		+----+-------------+------------+------------+------+---------------+------------+---------+-------+------+----------+--------------------------+
-		|  1 | SIMPLE      | tb_user_id | NULL       | ref  | idx_status    | idx_status | 1       | const |   81 |   100.00 | Using where; Using index |
-		+----+-------------+------------+------------+------+---------------+------------+---------+-------+------+----------+--------------------------+
-		 * 以上可知，此查询语句走辅助索引idx_status，且不需要回表。锁：由for update加行级锁（因为走了索引，所以不是表锁），对查询到的行加写锁，禁止读。
-		 * 行写锁有效保证了并发性能。
-	*/
-	row := tx.QueryRow("select id from tb_user_id where status = 1 limit 1 for update skip locked;")
+	// 用户id
 	var id int
-	err = row.Scan(&id)
+	userid := protos.UserId{Id: int64(id), Error: ""}
+	// 操作数据库
+	id, err = mysql.Register(username, password, tel, email)
 	if err != nil {
-		color.Red(err.Error())
-		_ = tx.Rollback()
-		return
+		userid.Id = -1
+		userid.Error = "server error"
+		logger.Log.Error(err.Error())
 	}
-	// 修改id状态
-	/*
-	 * SQL说明：
-	 */
-	_, err = tx.Exec("update tb_user_id set status = 2 where id = ?;", id)
-	if err != nil {
-		color.Red(err.Error())
-		_ = tx.Rollback()
-		return
-	}
-	// 将用户信息写入表
-	/*
-	 * SQL说明：不走任何索引，为插入整行数据，下insert同
-	 */
-	_, err = tx.Exec("insert into tb_user_info(userid, username, tel, email) values (?, ?, ?, ?);", id, username, tel, email)
-	if err != nil {
-		color.Red(err.Error())
-		_ = tx.Rollback()
-		return
-	}
-	if err != nil {
-		color.Red(err.Error())
-		_ = tx.Rollback()
-		return
-	}
-	// 将密码的md5写入表
-	_, err = tx.Exec("insert into tb_user_login(userid, password) values(?, ?);", id, utils.StringToMD5(password))
-	if err != nil {
-		color.Red(err.Error())
-		_ = tx.Rollback()
-		return
-	}
-	err = tx.Commit()
-	if err != nil {
-		color.Red(err.Error())
-		_ = tx.Rollback()
-		return
-	}
-	userid := protos.UserId{Id: int64(id)}
 	send, err := proto.Marshal(&userid)
+	if err != nil {
+		logger.Log.Error(err.Error())
+		return
+	}
 	_ = req.GetConnection().SendMsg(0x201, send)
 }

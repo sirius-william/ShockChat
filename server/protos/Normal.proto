@@ -1,12 +1,12 @@
 syntax = "proto3";
 package protos;
 
-/*  id：     0x103
+/*  id：     0x000
  *  发送者：  both
  *  接受者：  both
- *  用途：   携带响应结果
+ *  用途：   普通通知
  */
 message Status {
   bool status = 1;
-  string error = 2;
+  string message = 2;
 }

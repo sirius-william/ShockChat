@@ -19,9 +19,15 @@ message LegalCheckResult {
   string result = 1;
 }
 
-
-message UserLogin {
-  int32 id = 1;
-  bytes password = 2; // RSA
+/*  id: 0x103
+ *  发送者：  服务端
+ *  用途： 发送验证结果，成功status = 1，失败为0，发生错误-1
+*/
+message LegalCheckStatus {
+  int32 status = 1;
+  string error = 2;
 }
+
+
+
 

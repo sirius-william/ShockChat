@@ -1,4 +1,4 @@
-// @Title  Mysql.go
+// @Title  MysqlInit.go
 // @Description	数据库操作
 // @Author  SiriusWilliam  2021-01-22 20:38
 // @Update  2021-01-22 20:38

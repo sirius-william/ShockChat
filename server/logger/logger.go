@@ -28,15 +28,15 @@ type LoggerConfig struct {
 	LogDir       string `json:"log.dir"`
 	LogFileName  string `json:"log.file.name"`
 	LogLevel     int    `json:"log.level"`
-	LogToConsole bool   `json:"log.toConsole"`
-	LogToFile    bool   `json:"log.toFile"`
+	LogToConsole bool   `json:"log.console"`
+	LogToFile    bool   `json:"log.file"`
 }
 
 var LogConf LoggerConfig = LoggerConfig{}
 
 var Log Logger
 
-func init() {
+func InitLogger() {
 	Log = Logger{}
 	file, err := ioutil.ReadFile(utils.GlobalObject.ConfFilePath)
 	if err != nil {
@@ -100,22 +100,69 @@ const (
 )
 
 func (l *Logger) Error(msg string) {
+	l.printLog(msg, color.Red, ERROR)
+}
+
+func (l *Logger) TRACE(msg string) {
+	l.printLog(msg, color.White, TRACE)
+}
+
+func (l *Logger) DEBUG(msg string) {
+	l.printLog(msg, color.Green, DEBUG)
+}
+
+func (l *Logger) INFO(msg string) {
+	l.printLog(msg, color.Blue, INFO)
+}
+
+func (l *Logger) WARN(msg string) {
+	l.printLog(msg, color.Yellow, WARN)
+}
+
+func (l *Logger) FATAL(msg string) {
+	l.printLog(msg, color.Cyan, FATAL)
+}
+
+func (l *Logger) OFF(msg string) {
+	return
+}
+
+func (l *Logger) printLog(msg string, colorFunc func(format string, a ...interface{}), logType int) {
 	l.lock.Lock()
 	defer l.lock.Unlock()
 	now := time.Now()
-	str := "[" + now.Format("2006-01-02 15:04:05") + "]\tERROR\t" + msg + "\n"
+	level := "ALL"
+	switch logType {
+	case ALL:
+		level = "ALL"
+	case TRACE:
+		level = "TRACE"
+	case DEBUG:
+		level = "DEBUG"
+	case INFO:
+		level = "INFO"
+	case WARN:
+		level = "WARN"
+	case ERROR:
+		level = "ERROR"
+	case FATAL:
+		level = "FATAL"
+	case OFF:
+		level = "OFF"
+	}
+	str := "[" + now.Format("2006-01-02 15:04:05") + "]\t" + level + "\t" + msg + "\n"
 	if LogConf.LogLevel > ERROR {
 		return
 	}
 	if LogConf.LogToConsole {
-		color.Red(str)
+		//color.Red(str)
+		colorFunc(str)
 	}
 	if LogConf.LogToFile {
 		var file *os.File
 		var err error
 		// 拼接路径
 		filePath := LogConf.LogDir + "\\" + LogConf.LogFileName
-
 		checkFile()
 		file, err = os.OpenFile(filePath, os.O_WRONLY|os.O_APPEND, 777)
 		if err != nil {

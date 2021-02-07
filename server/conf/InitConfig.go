@@ -8,6 +8,7 @@
 package conf
 
 import (
+	"ShockChatServer/logger"
 	"ShockChatServer/utils"
 	"ShockChatServer/utils/mysql"
 	uredis "ShockChatServer/utils/redis"
@@ -70,6 +71,7 @@ func init() {
 		uredis.RedisPool = uredis.InitRedisPool()
 		utils.InitVars()
 		mysql.InitMySqlPool()
+		logger.InitLogger()
 	}
 	// 显示
 	if PrintConf.ShowLogo {
