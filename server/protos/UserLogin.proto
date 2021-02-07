@@ -1,0 +1,25 @@
+syntax = "proto3";
+package protos;
+
+
+/*
+ *  id: 0x300
+ *  发送者：客户端
+ *  用途：客户端请求登录
+*/
+message UserLogin {
+  int32 status = 1;
+  int32 id = 2;
+  bytes password = 3; // RSA
+}
+
+/*
+ * id：0x301
+ * 发送者：服务端
+ * 用途：发送用户登录验证结果
+*/
+message LoginResult {
+  int32 status = 1;
+  bool isSuccess = 2;
+  string error = 3;
+}
