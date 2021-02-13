@@ -5,6 +5,7 @@
 package router
 
 import (
+	"ShockChatServer/protos"
 	"ShockChatServer/utils/mysql"
 	"database/sql"
 	"errors"
@@ -26,11 +27,10 @@ func (g *GetFriendListRouter) Handle(req ziface.IRequest) {
 
 /*
  * 获取好友列表
- * 返回一个map，map字段为{id: "xxx", name: "xxx"}
  */
-func GetFriendList(id string) (map[string]string, error) {
+func GetFriendList(id string) (*protos.FriendList, error) {
 	// 返回结果集
-	res := make(map[string]string)
+	res := &protos.FriendList{}
 	// 开启事务
 	tx, err := mysql.Mysql.Begin()
 	/*
@@ -48,14 +48,18 @@ func GetFriendList(id string) (map[string]string, error) {
 	var rows *sql.Rows
 	rows, err = tx.Query("select userid, username from tb_user_info a inner join tb_friend b on b.id1=? and b.id2=a.userid;", id)
 	err = tx.Commit()
-	var userid string
+	var userid int32
 	var username string
+
 	for rows.Next() {
 		err = rows.Scan(&userid, &username)
 		if err != nil {
 			break
 		}
-		res[userid] = username
+		var friend *protos.Friend
+		friend.Userid = userid
+		friend.Username = username
+		res.FriendList = append(res.FriendList, friend)
 	}
 	if err != nil {
 		return nil, err
@@ -71,7 +75,7 @@ func GetFriendList(id string) (map[string]string, error) {
  */
 func AddFriend(id1 int, id2 int) (int64, error) {
 	if id1 == id2 || id1 <= 0 || id2 <= 0 {
-		return -1, errors.New("id1 == id2 or one of them is empty")
+		return -1, errors.New("两个id相同，或一个为空")
 	}
 	var tx *sql.Tx
 	var err error

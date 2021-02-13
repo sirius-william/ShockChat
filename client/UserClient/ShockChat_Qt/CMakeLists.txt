@@ -50,11 +50,14 @@ set(PROJECT_SOURCES
         ${TS_FILES}
 	${myprotos}
 	${src}
+	definations.hpp
+	data.hpp
+
 )
 # 定义一些关于socket连接的宏
 add_definitions(-DHOST="127.0.0.1")
 add_definitions(-DPORT=8999)
-add_definitions(-DTIME_OUT=800000)
+add_definitions(-DTIME_OUT=800000000)
 # 公钥
 add_definitions(-DPUBLIC_KEY="public.pem")
 

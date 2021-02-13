@@ -5,6 +5,7 @@
 package mysql
 
 import (
+	"ShockChatServer/logger"
 	//"database/sql"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
@@ -36,11 +37,13 @@ var Mysql *sql.DB
 var err error
 
 func InitMySqlPool() {
+
 	Host := MysqlConf.Host
 	Password := MysqlConf.Password
 	Port := MysqlConf.Port
 	Database := MysqlConf.Database
 	UserName := MysqlConf.UserName
+	logger.Log.INFO("Init MySQL: Connect to " + Host + ":" + strconv.Itoa(Port) + "/" + Database)
 	url := UserName + ":" + Password + "@tcp(" + Host + ":" + strconv.Itoa(Port) + ")/" + Database
 	Mysql, err = sql.Open("mysql", url)
 	if err != nil {
@@ -48,4 +51,13 @@ func InitMySqlPool() {
 	}
 	Mysql.SetMaxOpenConns(MysqlConf.MaxConnSize)
 	Mysql.SetMaxIdleConns(MysqlConf.MaxIdleSize)
+}
+
+func DisConnect() error {
+	err = Mysql.Close()
+	if err != nil {
+		logger.Log.Error(err.Error())
+		return err
+	}
+	return nil
 }

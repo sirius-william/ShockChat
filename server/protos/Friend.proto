@@ -1,0 +1,28 @@
+syntax = "proto3";
+package protos;
+
+
+/* id：0x400
+ * 发送者：客户端
+ * 请求获取好友列表
+*/
+message GetFriendListRequest{
+  int32 id = 1;
+  string token = 2;
+}
+
+message Friend {
+  int32 userid = 1;
+  string username = 2;
+  bool status = 3;  // 是否在线
+}
+
+/*
+ * id：0x401
+ * 发送者：服务端
+ * 存储好友列表
+*/
+message FriendList {
+  int32 status = 1;
+  repeated Friend friendList = 2;
+}

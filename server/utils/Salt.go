@@ -18,7 +18,7 @@ func Riddle(salt string, req ziface.IRequest) {
 	// 计算出md5值
 	m := StringToMD5(salt)
 	// 将md5写入连接的自定义属性中
-	req.GetConnection().SetProperty("legal_check", m)
+	req.GetConnection().SetProperty("riddle", m)
 }
 
 func GetSalt() string {

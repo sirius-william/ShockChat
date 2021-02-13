@@ -177,9 +177,11 @@ class Token PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kTokenFieldNumber = 1,
+    kTokenFieldNumber = 2,
+    kErrorFieldNumber = 3,
+    kStatusFieldNumber = 1,
   };
-  // bytes token = 1;
+  // bytes token = 2;
   void clear_token();
   const std::string& token() const;
   void set_token(const std::string& value);
@@ -195,6 +197,31 @@ class Token PROTOBUF_FINAL :
   std::string* _internal_mutable_token();
   public:
 
+  // string error = 3;
+  void clear_error();
+  const std::string& error() const;
+  void set_error(const std::string& value);
+  void set_error(std::string&& value);
+  void set_error(const char* value);
+  void set_error(const char* value, size_t size);
+  std::string* mutable_error();
+  std::string* release_error();
+  void set_allocated_error(std::string* error);
+  private:
+  const std::string& _internal_error() const;
+  void _internal_set_error(const std::string& value);
+  std::string* _internal_mutable_error();
+  public:
+
+  // int32 status = 1;
+  void clear_status();
+  ::PROTOBUF_NAMESPACE_ID::int32 status() const;
+  void set_status(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_status() const;
+  void _internal_set_status(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
   // @@protoc_insertion_point(class_scope:protos.Token)
  private:
   class _Internal;
@@ -203,6 +230,8 @@ class Token PROTOBUF_FINAL :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr token_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr error_;
+  ::PROTOBUF_NAMESPACE_ID::int32 status_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_token_2eproto;
 };
@@ -217,7 +246,27 @@ class Token PROTOBUF_FINAL :
 #endif  // __GNUC__
 // Token
 
-// bytes token = 1;
+// int32 status = 1;
+inline void Token::clear_status() {
+  status_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 Token::_internal_status() const {
+  return status_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 Token::status() const {
+  // @@protoc_insertion_point(field_get:protos.Token.status)
+  return _internal_status();
+}
+inline void Token::_internal_set_status(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  status_ = value;
+}
+inline void Token::set_status(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_status(value);
+  // @@protoc_insertion_point(field_set:protos.Token.status)
+}
+
+// bytes token = 2;
 inline void Token::clear_token() {
   token_.ClearToEmpty();
 }
@@ -276,6 +325,67 @@ inline void Token::set_allocated_token(std::string* token) {
   token_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), token,
       GetArena());
   // @@protoc_insertion_point(field_set_allocated:protos.Token.token)
+}
+
+// string error = 3;
+inline void Token::clear_error() {
+  error_.ClearToEmpty();
+}
+inline const std::string& Token::error() const {
+  // @@protoc_insertion_point(field_get:protos.Token.error)
+  return _internal_error();
+}
+inline void Token::set_error(const std::string& value) {
+  _internal_set_error(value);
+  // @@protoc_insertion_point(field_set:protos.Token.error)
+}
+inline std::string* Token::mutable_error() {
+  // @@protoc_insertion_point(field_mutable:protos.Token.error)
+  return _internal_mutable_error();
+}
+inline const std::string& Token::_internal_error() const {
+  return error_.Get();
+}
+inline void Token::_internal_set_error(const std::string& value) {
+  
+  error_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArena());
+}
+inline void Token::set_error(std::string&& value) {
+  
+  error_.Set(
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, ::std::move(value), GetArena());
+  // @@protoc_insertion_point(field_set_rvalue:protos.Token.error)
+}
+inline void Token::set_error(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  error_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, ::std::string(value), GetArena());
+  // @@protoc_insertion_point(field_set_char:protos.Token.error)
+}
+inline void Token::set_error(const char* value,
+    size_t size) {
+  
+  error_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, ::std::string(
+      reinterpret_cast<const char*>(value), size), GetArena());
+  // @@protoc_insertion_point(field_set_pointer:protos.Token.error)
+}
+inline std::string* Token::_internal_mutable_error() {
+  
+  return error_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArena());
+}
+inline std::string* Token::release_error() {
+  // @@protoc_insertion_point(field_release:protos.Token.error)
+  return error_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline void Token::set_allocated_error(std::string* error) {
+  if (error != nullptr) {
+    
+  } else {
+    
+  }
+  error_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), error,
+      GetArena());
+  // @@protoc_insertion_point(field_set_allocated:protos.Token.error)
 }
 
 #ifdef __GNUC__

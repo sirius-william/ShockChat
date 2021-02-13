@@ -5,13 +5,13 @@ import (
 )
 
 func TestRSAEncrypt(str []byte) ([]byte, error) {
-	res, err := utils.Encrypt(str, "public.pem")
+	res, err := utils.Encrypt(str)
 
 	return res, err
 }
 
 func TestRSADecrypt(_byte []byte) string {
-	res, err := utils.Decrypt(_byte, "private.pem")
+	res, err := utils.Decrypt(_byte)
 	if err != nil {
 		return ""
 	} else {

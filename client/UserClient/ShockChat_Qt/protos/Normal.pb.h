@@ -177,23 +177,23 @@ class Status PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kErrorFieldNumber = 2,
+    kMessageFieldNumber = 2,
     kStatusFieldNumber = 1,
   };
-  // string error = 2;
-  void clear_error();
-  const std::string& error() const;
-  void set_error(const std::string& value);
-  void set_error(std::string&& value);
-  void set_error(const char* value);
-  void set_error(const char* value, size_t size);
-  std::string* mutable_error();
-  std::string* release_error();
-  void set_allocated_error(std::string* error);
+  // string message = 2;
+  void clear_message();
+  const std::string& message() const;
+  void set_message(const std::string& value);
+  void set_message(std::string&& value);
+  void set_message(const char* value);
+  void set_message(const char* value, size_t size);
+  std::string* mutable_message();
+  std::string* release_message();
+  void set_allocated_message(std::string* message);
   private:
-  const std::string& _internal_error() const;
-  void _internal_set_error(const std::string& value);
-  std::string* _internal_mutable_error();
+  const std::string& _internal_message() const;
+  void _internal_set_message(const std::string& value);
+  std::string* _internal_mutable_message();
   public:
 
   // bool status = 1;
@@ -212,7 +212,7 @@ class Status PROTOBUF_FINAL :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr error_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr message_;
   bool status_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Normal_2eproto;
@@ -248,65 +248,65 @@ inline void Status::set_status(bool value) {
   // @@protoc_insertion_point(field_set:protos.Status.status)
 }
 
-// string error = 2;
-inline void Status::clear_error() {
-  error_.ClearToEmpty();
+// string message = 2;
+inline void Status::clear_message() {
+  message_.ClearToEmpty();
 }
-inline const std::string& Status::error() const {
-  // @@protoc_insertion_point(field_get:protos.Status.error)
-  return _internal_error();
+inline const std::string& Status::message() const {
+  // @@protoc_insertion_point(field_get:protos.Status.message)
+  return _internal_message();
 }
-inline void Status::set_error(const std::string& value) {
-  _internal_set_error(value);
-  // @@protoc_insertion_point(field_set:protos.Status.error)
+inline void Status::set_message(const std::string& value) {
+  _internal_set_message(value);
+  // @@protoc_insertion_point(field_set:protos.Status.message)
 }
-inline std::string* Status::mutable_error() {
-  // @@protoc_insertion_point(field_mutable:protos.Status.error)
-  return _internal_mutable_error();
+inline std::string* Status::mutable_message() {
+  // @@protoc_insertion_point(field_mutable:protos.Status.message)
+  return _internal_mutable_message();
 }
-inline const std::string& Status::_internal_error() const {
-  return error_.Get();
+inline const std::string& Status::_internal_message() const {
+  return message_.Get();
 }
-inline void Status::_internal_set_error(const std::string& value) {
+inline void Status::_internal_set_message(const std::string& value) {
   
-  error_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArena());
+  message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArena());
 }
-inline void Status::set_error(std::string&& value) {
+inline void Status::set_message(std::string&& value) {
   
-  error_.Set(
+  message_.Set(
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, ::std::move(value), GetArena());
-  // @@protoc_insertion_point(field_set_rvalue:protos.Status.error)
+  // @@protoc_insertion_point(field_set_rvalue:protos.Status.message)
 }
-inline void Status::set_error(const char* value) {
+inline void Status::set_message(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
-  error_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, ::std::string(value), GetArena());
-  // @@protoc_insertion_point(field_set_char:protos.Status.error)
+  message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, ::std::string(value), GetArena());
+  // @@protoc_insertion_point(field_set_char:protos.Status.message)
 }
-inline void Status::set_error(const char* value,
+inline void Status::set_message(const char* value,
     size_t size) {
   
-  error_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, ::std::string(
+  message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, ::std::string(
       reinterpret_cast<const char*>(value), size), GetArena());
-  // @@protoc_insertion_point(field_set_pointer:protos.Status.error)
+  // @@protoc_insertion_point(field_set_pointer:protos.Status.message)
 }
-inline std::string* Status::_internal_mutable_error() {
+inline std::string* Status::_internal_mutable_message() {
   
-  return error_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArena());
+  return message_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArena());
 }
-inline std::string* Status::release_error() {
-  // @@protoc_insertion_point(field_release:protos.Status.error)
-  return error_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+inline std::string* Status::release_message() {
+  // @@protoc_insertion_point(field_release:protos.Status.message)
+  return message_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline void Status::set_allocated_error(std::string* error) {
-  if (error != nullptr) {
+inline void Status::set_allocated_message(std::string* message) {
+  if (message != nullptr) {
     
   } else {
     
   }
-  error_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), error,
+  message_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), message,
       GetArena());
-  // @@protoc_insertion_point(field_set_allocated:protos.Status.error)
+  // @@protoc_insertion_point(field_set_allocated:protos.Status.message)
 }
 
 #ifdef __GNUC__

@@ -1,0 +1,14 @@
+syntax = "proto3";
+package protos;
+
+import "google/protobuf/timestamp.proto";
+
+message Message{
+  int32 userid = 1;
+  google.protobuf.Timestamp sendTime = 2;
+  bytes msg = 3;
+}
+message Messages {
+  int32 status = 1;
+  repeated Message msg = 2;
+}

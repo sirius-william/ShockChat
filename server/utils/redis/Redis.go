@@ -5,6 +5,7 @@
 package redis
 
 import (
+	"ShockChatServer/logger"
 	"github.com/gomodule/redigo/redis"
 	"strconv"
 	"time"
@@ -36,8 +37,9 @@ var RedisConf RedisConfig = RedisConfig{
 	ConnectionTimeout: 10,
 }
 
-func InitRedisPool() *redis.Pool {
-	return &redis.Pool{
+func InitRedisPool() {
+	logger.Log.INFO("Init RedisPool: Connect to " + RedisConf.Host + ":" + strconv.Itoa(RedisConf.Port))
+	RedisPool = &redis.Pool{
 		Dial: func() (redis.Conn, error) {
 			dial, err := redis.Dial(
 				"tcp",
@@ -85,4 +87,13 @@ func Exec(cmd string, args ...interface{}) ([]string, error) {
 		}
 	}
 	return resList, nil
+}
+
+func DisConnect() error {
+	err := RedisPool.Close()
+	if err != nil {
+		logger.Log.Error(err.Error())
+		return err
+	}
+	return nil
 }

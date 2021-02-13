@@ -1,50 +1,39 @@
 #ifndef NETTHREAD_HPP
 #define NETTHREAD_HPP
 
+#include <QMutex>
 #include <QObject>
 #include <QTcpSocket>
 #include <QThread>
 #include "protos/Normal.pb.h"
+#include "Definations.hpp"
+#include "data.hpp"
+
 // 子线程类，用于通信
 class NetThread : public QObject
 {
     Q_OBJECT
 public:
     explicit NetThread(QObject *parent = nullptr);
-    // 通信socket
-    QTcpSocket* socket;
-
-
+    ~NetThread();
+    QMutex mutex;
 private:
-    // 用户token，登录后获取
+    QTcpSocket *socket;
+    Data readDataFromSocket();
     QString token;
-
-signals:
-    // 注册结果
-    void registerResSignal(bool res);
-    // 登录结果
-    void loginResSignal(bool res);
-    // 向主线程发送一些通知，显示在QMessageBox里
-    void sendMsg(QString msg);
-    // 发送连接服务器失败信号
-    void serverError(QString beacuse);
-    // 将0x103消息发给主线程进行解析
-    void send0x103ToMain(bool status, QString err);
-    // 告诉主线程验证合法性通过了
-    void checkSuccessfulSignal();
-    // 拿到了token
-    void getTokenSignal(QString token);
-    // 注册用户时拿到了id
-    void getIdSignal(bool status, QString id);
-    // socket断开
-    void socketDisConnectSignal();
+    int userid;
 public slots:
-    // 用于用户注册的槽函数
-    void registerSlot(QString username, QString password, QString tel, QString mail);
-    // 用于用户登录的槽函数
-    void loginSlot(QString id, QString password);
-    void init();
-    void SocketConnect();
+    // 发送者：主线程。请求向服务器验证合法性连接
+    void startLegalCheckSlot();
+    void initNetThread();
+    void userLogin(int userid, QString password);
+    void getFriendList();
+signals:
+    void legalCheckResult(int status, QString error="");
+    void userLoginResult(int status, bool isSuccess, QString error="");
+    void connectSuccessfully();
+    void connectBreakSignal();
 };
+
 
 #endif // NETTHREAD_HPP

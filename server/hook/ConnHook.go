@@ -21,6 +21,7 @@ func AfterConnectionStopped(conn ziface.IConnection) {
 		return
 	}
 	id := pro.(int32)
-	delete(utils.ConnectionIdReflectorZinxConnID, id)
+	//delete(utils.ConnectionIdReflectorZinxConnID, id)
+	utils.ConnectionIdReflectorZinxConnID.Delete(id)
 	_, _ = redis.Exec("hdel", "token", pro)
 }

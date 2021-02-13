@@ -44,7 +44,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_Normal_2eproto::offsets[] PROT
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::protos::Status, status_),
-  PROTOBUF_FIELD_OFFSET(::protos::Status, error_),
+  PROTOBUF_FIELD_OFFSET(::protos::Status, message_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::protos::Status)},
@@ -55,8 +55,8 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 };
 
 const char descriptor_table_protodef_Normal_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\014Normal.proto\022\006protos\"\'\n\006Status\022\016\n\006stat"
-  "us\030\001 \001(\010\022\r\n\005error\030\002 \001(\tb\006proto3"
+  "\n\014Normal.proto\022\006protos\")\n\006Status\022\016\n\006stat"
+  "us\030\001 \001(\010\022\017\n\007message\030\002 \001(\tb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_Normal_2eproto_deps[1] = {
 };
@@ -65,7 +65,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_Nor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_Normal_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Normal_2eproto = {
-  false, false, descriptor_table_protodef_Normal_2eproto, "Normal.proto", 71,
+  false, false, descriptor_table_protodef_Normal_2eproto, "Normal.proto", 73,
   &descriptor_table_Normal_2eproto_once, descriptor_table_Normal_2eproto_sccs, descriptor_table_Normal_2eproto_deps, 1, 0,
   schemas, file_default_instances, TableStruct_Normal_2eproto::offsets,
   file_level_metadata_Normal_2eproto, 1, file_level_enum_descriptors_Normal_2eproto, file_level_service_descriptors_Normal_2eproto,
@@ -90,9 +90,9 @@ Status::Status(::PROTOBUF_NAMESPACE_ID::Arena* arena)
 Status::Status(const Status& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  error_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (!from._internal_error().empty()) {
-    error_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_error(), 
+  message_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_message().empty()) {
+    message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_message(), 
       GetArena());
   }
   status_ = from.status_;
@@ -101,7 +101,7 @@ Status::Status(const Status& from)
 
 void Status::SharedCtor() {
   ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_Status_Normal_2eproto.base);
-  error_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  message_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   status_ = false;
 }
 
@@ -113,7 +113,7 @@ Status::~Status() {
 
 void Status::SharedDtor() {
   GOOGLE_DCHECK(GetArena() == nullptr);
-  error_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  message_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void Status::ArenaDtor(void* object) {
@@ -137,7 +137,7 @@ void Status::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  error_.ClearToEmpty();
+  message_.ClearToEmpty();
   status_ = false;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -156,12 +156,12 @@ const char* Status::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::int
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // string error = 2;
+      // string message = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
-          auto str = _internal_mutable_error();
+          auto str = _internal_mutable_message();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "protos.Status.error"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "protos.Status.message"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -199,14 +199,14 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(1, this->_internal_status(), target);
   }
 
-  // string error = 2;
-  if (this->error().size() > 0) {
+  // string message = 2;
+  if (this->message().size() > 0) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_error().data(), static_cast<int>(this->_internal_error().length()),
+      this->_internal_message().data(), static_cast<int>(this->_internal_message().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "protos.Status.error");
+      "protos.Status.message");
     target = stream->WriteStringMaybeAliased(
-        2, this->_internal_error(), target);
+        2, this->_internal_message(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -225,11 +225,11 @@ size_t Status::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string error = 2;
-  if (this->error().size() > 0) {
+  // string message = 2;
+  if (this->message().size() > 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_error());
+        this->_internal_message());
   }
 
   // bool status = 1;
@@ -268,8 +268,8 @@ void Status::MergeFrom(const Status& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.error().size() > 0) {
-    _internal_set_error(from._internal_error());
+  if (from.message().size() > 0) {
+    _internal_set_message(from._internal_message());
   }
   if (from.status() != 0) {
     _internal_set_status(from._internal_status());
@@ -297,7 +297,7 @@ bool Status::IsInitialized() const {
 void Status::InternalSwap(Status* other) {
   using std::swap;
   _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
-  error_.Swap(&other->error_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+  message_.Swap(&other->message_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
   swap(status_, other->status_);
 }
 

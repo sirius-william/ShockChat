@@ -10,6 +10,7 @@ package conf
 import (
 	"ShockChatServer/logger"
 	"ShockChatServer/utils"
+	"ShockChatServer/utils/mongodb"
 	"ShockChatServer/utils/mysql"
 	uredis "ShockChatServer/utils/redis"
 	"encoding/json"
@@ -41,6 +42,10 @@ type PrintConfig struct {
 var PrintConf PrintConfig = PrintConfig{true, true}
 
 func init() {
+	GetConfig()
+}
+
+func GetConfig() {
 	// 获取当前运行目录
 	pwd, err := os.Getwd()
 	// 检查logo.txt文件是否存在
@@ -62,27 +67,34 @@ func init() {
 	// 反序列化到结构体变量
 	if err == nil {
 		_ = json.Unmarshal(conf, &PrintConf)
-		_ = json.Unmarshal(conf, &mysql.MysqlConf)
 		_ = json.Unmarshal(conf, &utils.KeyFile)
 		_ = json.Unmarshal(conf, &utils.TokenConf)
+		_ = json.Unmarshal(conf, &mysql.MysqlConf)
 		_ = json.Unmarshal(conf, &utils.EmailConf)
 		_ = json.Unmarshal(conf, &uredis.RedisConf)
-		// 初始化redis连接池
-		uredis.RedisPool = uredis.InitRedisPool()
-		utils.InitVars()
-		mysql.InitMySqlPool()
-		logger.InitLogger()
+		_ = json.Unmarshal(conf, &mongodb.MongoConfig)
+		// 显示图形和版权
+		ShowInfo()
+		color.Green("finding config file:%s, Unmarshall successfully.", pwd+"\\conf\\zinx.json")
+		// 初始化全局变量
+	} else {
+		ShowInfo()
+		color.Green("Didn't found config file, using default config.")
 	}
-	// 显示
+	// 初始化日志系统
+	logger.InitLogger()
+	// 初始化全局变量
+	utils.InitVars()
+	// 初始化各种数据库
+	uredis.InitRedisPool()
+	mysql.InitMySqlPool()
+	mongodb.InitMongoDB()
+}
+func ShowInfo() {
 	if PrintConf.ShowLogo {
 		color.Blue(Logo)
 	}
 	if PrintConf.ShowCopyright {
 		color.HiBlue(Copyright)
-	}
-	if err == nil {
-		color.Green("finding config file:%s, Unmarshall successfully.", pwd+"/conf/zinx.json")
-	} else {
-		color.Green("Didn't found config file, using default config.")
 	}
 }

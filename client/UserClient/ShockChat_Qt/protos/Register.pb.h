@@ -378,8 +378,25 @@ class UserId PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kErrorFieldNumber = 2,
     kIdFieldNumber = 1,
   };
+  // string error = 2;
+  void clear_error();
+  const std::string& error() const;
+  void set_error(const std::string& value);
+  void set_error(std::string&& value);
+  void set_error(const char* value);
+  void set_error(const char* value, size_t size);
+  std::string* mutable_error();
+  std::string* release_error();
+  void set_allocated_error(std::string* error);
+  private:
+  const std::string& _internal_error() const;
+  void _internal_set_error(const std::string& value);
+  std::string* _internal_mutable_error();
+  public:
+
   // int64 id = 1;
   void clear_id();
   ::PROTOBUF_NAMESPACE_ID::int64 id() const;
@@ -396,6 +413,7 @@ class UserId PROTOBUF_FINAL :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr error_;
   ::PROTOBUF_NAMESPACE_ID::int64 id_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Register_2eproto;
@@ -677,6 +695,67 @@ inline void UserId::_internal_set_id(::PROTOBUF_NAMESPACE_ID::int64 value) {
 inline void UserId::set_id(::PROTOBUF_NAMESPACE_ID::int64 value) {
   _internal_set_id(value);
   // @@protoc_insertion_point(field_set:protos.UserId.id)
+}
+
+// string error = 2;
+inline void UserId::clear_error() {
+  error_.ClearToEmpty();
+}
+inline const std::string& UserId::error() const {
+  // @@protoc_insertion_point(field_get:protos.UserId.error)
+  return _internal_error();
+}
+inline void UserId::set_error(const std::string& value) {
+  _internal_set_error(value);
+  // @@protoc_insertion_point(field_set:protos.UserId.error)
+}
+inline std::string* UserId::mutable_error() {
+  // @@protoc_insertion_point(field_mutable:protos.UserId.error)
+  return _internal_mutable_error();
+}
+inline const std::string& UserId::_internal_error() const {
+  return error_.Get();
+}
+inline void UserId::_internal_set_error(const std::string& value) {
+  
+  error_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArena());
+}
+inline void UserId::set_error(std::string&& value) {
+  
+  error_.Set(
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, ::std::move(value), GetArena());
+  // @@protoc_insertion_point(field_set_rvalue:protos.UserId.error)
+}
+inline void UserId::set_error(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  error_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, ::std::string(value), GetArena());
+  // @@protoc_insertion_point(field_set_char:protos.UserId.error)
+}
+inline void UserId::set_error(const char* value,
+    size_t size) {
+  
+  error_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, ::std::string(
+      reinterpret_cast<const char*>(value), size), GetArena());
+  // @@protoc_insertion_point(field_set_pointer:protos.UserId.error)
+}
+inline std::string* UserId::_internal_mutable_error() {
+  
+  return error_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArena());
+}
+inline std::string* UserId::release_error() {
+  // @@protoc_insertion_point(field_release:protos.UserId.error)
+  return error_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline void UserId::set_allocated_error(std::string* error) {
+  if (error != nullptr) {
+    
+  } else {
+    
+  }
+  error_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), error,
+      GetArena());
+  // @@protoc_insertion_point(field_set_allocated:protos.UserId.error)
 }
 
 #ifdef __GNUC__

@@ -11,14 +11,14 @@ import (
 )
 
 type KeyFileConfig struct {
-	PublicKeyFilePath string `json:"publicKey"`
+	PublicKeyFilePath  string `json:"publicKey"`
 	PrivateKeyFilePath string `json:"privateKey"`
 }
 
 var KeyFile KeyFileConfig = KeyFileConfig{"public.pem", "private.pem"}
 
-func Encrypt(str []byte, publicKeyName string)([]byte, error)  {
-	file, err := os.Open(publicKeyName)
+func Encrypt(str []byte) ([]byte, error) {
+	file, err := os.Open(KeyFile.PublicKeyFilePath)
 	if err != nil {
 		fmt.Println("file:", err)
 		return nil, err
@@ -30,7 +30,7 @@ func Encrypt(str []byte, publicKeyName string)([]byte, error)  {
 	_, _ = file.Read(buff)
 	block, _ := pem.Decode(buff)
 	publicKeyInterface, err := x509.ParsePKIXPublicKey(block.Bytes)
-	if err != nil{
+	if err != nil {
 		fmt.Println("parse key:", err)
 		return nil, err
 	}
@@ -58,9 +58,9 @@ func Encrypt(str []byte, publicKeyName string)([]byte, error)  {
 	cipherText = buffer.Bytes()
 	return cipherText, nil
 }
-func Decrypt(str []byte, privateKeyName string) ([]byte, error) {
-	file,err:=os.Open(privateKeyName)
-	if err!=nil{
+func Decrypt(str []byte) ([]byte, error) {
+	file, err := os.Open(KeyFile.PrivateKeyFilePath)
+	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
@@ -69,14 +69,14 @@ func Decrypt(str []byte, privateKeyName string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	buf:=make([]byte,info.Size())
+	buf := make([]byte, info.Size())
 	_, _ = file.Read(buf)
 	//pem解码
 	block, _ := pem.Decode(buf)
 
 	//X509解码
 	privateKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
-	if err!=nil{
+	if err != nil {
 		return nil, err
 	}
 	var plainText []byte

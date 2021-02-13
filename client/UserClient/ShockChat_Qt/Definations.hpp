@@ -1,0 +1,6 @@
+#ifndef DEFINATIONS_HPP
+#define DEFINATIONS_HPP
+
+#define ERROR_SOCKET -1
+#define ERROR_CLIENT -2
+#endif // DEFINATIONS_HPP

@@ -9,6 +9,7 @@ import (
 	"ShockChatServer/protos"
 	"ShockChatServer/utils"
 	"ShockChatServer/utils/mysql"
+	"fmt"
 	"github.com/aceld/zinx/ziface"
 	"github.com/aceld/zinx/znet"
 	"github.com/golang/protobuf/proto"
@@ -19,7 +20,8 @@ type LoginRouter struct {
 }
 
 func (br *LoginRouter) Handle(req ziface.IRequest) {
-	if IsLegal(req) == false {
+	isReqChecked := IsLegal(req)
+	if isReqChecked == false {
 		req.GetConnection().Stop()
 		return
 	}
@@ -50,7 +52,8 @@ func (br *LoginRouter) Handle(req ziface.IRequest) {
 	var userid int32 = userLoginInfo.Id
 	var passwordBytes []byte
 	var password string
-	passwordBytes, err = utils.Decrypt(userLoginInfo.Password, utils.KeyFile.PrivateKeyFilePath)
+	fmt.Println(len(userLoginInfo.Password))
+	passwordBytes, err = utils.Decrypt(userLoginInfo.Password)
 	if err != nil {
 		logger.Log.Error(err.Error())
 		return
@@ -58,24 +61,24 @@ func (br *LoginRouter) Handle(req ziface.IRequest) {
 	password = string(passwordBytes)
 	var isChecked bool
 	isChecked, err = mysql.UserLogin(userid, password)
-	if err != nil {
-		status.Status = 0
-		status.IsSuccess = isChecked
-		if err.Error() == "userid or password is incorrect" {
-			status.Error = "userid or password is incorrect"
-			send, err = proto.Marshal(&status)
-			if err != nil {
-				logger.Log.Error(err.Error())
-				return
-			}
-			err = req.GetConnection().SendMsg(0x301, send)
-			if err != nil {
-				logger.Log.Error(err.Error())
-				return
-			}
-		} else {
+	status.Status = 0
+	status.IsSuccess = isChecked
+	status.Error = err.Error()
+	var token string
+	if isChecked {
+		token, err = utils.CreateToken(&userLoginInfo)
+		if err != nil {
 			logger.Log.Error(err.Error())
 			return
 		}
+		status.Error = token
 	}
+	send, _ = proto.Marshal(&status)
+	err = req.GetConnection().SendMsg(0x301, send)
+	if err != nil {
+		logger.Log.Error(err.Error())
+		return
+	}
+	// 将连接存放至连接池内
+	utils.ConnectionIdReflectorZinxConnID.Add(userid, req.GetConnection())
 }

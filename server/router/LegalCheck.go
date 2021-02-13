@@ -8,6 +8,7 @@ import (
 	"ShockChatServer/logger"
 	"ShockChatServer/protos"
 	"ShockChatServer/utils"
+	"fmt"
 	"github.com/aceld/zinx/ziface"
 	"github.com/aceld/zinx/znet"
 	"github.com/golang/protobuf/proto"
@@ -90,8 +91,9 @@ func (br *SaltCheck) Handle(req ziface.IRequest) {
 		}
 	}
 	// 拿到之前存储的计算好的谜题结果
-	riddle, err := req.GetConnection().GetProperty("salt")
+	riddle, err := req.GetConnection().GetProperty("riddle")
 	if err != nil {
+		logger.Log.Error(err.Error())
 		return
 	}
 	// 对比
@@ -105,6 +107,7 @@ func (br *SaltCheck) Handle(req ziface.IRequest) {
 	}
 	send, err = proto.Marshal(&checkRes)
 	if err != nil {
+		fmt.Println("序列化错误")
 		logger.Log.Error(err.Error())
 		return
 	}
@@ -114,8 +117,9 @@ func (br *SaltCheck) Handle(req ziface.IRequest) {
 
 func IsLegal(req ziface.IRequest) bool {
 	checked, err := req.GetConnection().GetProperty("checked")
-	if checked != nil && err != nil {
+	if checked != nil && err == nil {
 		if checked.(bool) == true {
+			fmt.Println("合法连接")
 			return true
 		}
 	}

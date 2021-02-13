@@ -16,24 +16,17 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    bool checked;
-    NetThread* netThread;
-
-signals:
-    void initNetThreadSignal();
-    void initNetThreadSocket();
-    void wantToLogin(QString id, QString password);
-public slots:
-    void get0x103Msg(bool status, QString err);
-    void get0x201Msg(QString id);
-    void get0x301Msg(QString token);
-    void sendMsgSlot(QString err);
-    void loginResSlot(bool res);
-    void getTokenSlot(QString _token);
-    void serverErrorSlot(QString err);
+    void initGui();
+    void initThread();
 private:
     Ui::MainWindow *ui;
-    QString token;
-    RegisterWindow* registerWindow;
+    NetThread *netThread;
+signals:
+    void startLegalCheckSignal();
+    void initThreadSignal();
+    void userLogin(int userid, QString password);
+    void getFriendList();
+public slots:
+    void loginResultSlots(int status, bool isSuccess = true, QString error="");
 };
 #endif // MAINWINDOW_HPP

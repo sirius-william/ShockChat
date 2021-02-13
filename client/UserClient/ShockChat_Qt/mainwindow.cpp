@@ -8,45 +8,9 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->netThread = new NetThread();
-    QThread *netQThread = new QThread();
-    this->netThread->moveToThread(netQThread);
-    netQThread->start();
-    this->registerWindow = new RegisterWindow();
-    this->registerWindow->setModal(true);
-    connect(this, &MainWindow::initNetThreadSignal, this->netThread, &NetThread::init);
+    this->initGui();
+    this->initThread();
 
-    connect(this->netThread, &NetThread::sendMsg, this, &MainWindow::sendMsgSlot);
-    connect(this->netThread, &NetThread::serverError, this, &MainWindow::serverErrorSlot);
-//    connect(this->netThread, &NetThread::getIdSignal, this, &MainWindow::g);
-    connect(this->netThread, &NetThread::getTokenSignal, this, &MainWindow::getTokenSlot);
-    connect(this->netThread, &NetThread::loginResSignal, this, &MainWindow::loginResSlot);
-    connect(this->netThread, &NetThread::send0x103ToMain, this, &MainWindow::get0x103Msg);
-    connect(this, &MainWindow::initNetThreadSocket, this->netThread, &NetThread::SocketConnect, Qt::BlockingQueuedConnection);
-    connect(this->netThread, &NetThread::checkSuccessfulSignal, this, [=](){
-        QMessageBox messageBox;
-        messageBox.setText("legal check successfull");
-        messageBox.exec();
-    });
-    connect(this->netThread, &NetThread::socketDisConnectSignal, this, [=](){
-        QMessageBox messageBox;
-        messageBox.setText("socket disconnected");
-        messageBox.exec();
-        QApplication* app;
-        app->quit();
-    });
-    connect(this->ui->RegisterBtn, &QPushButton::clicked, [=](){
-        this->registerWindow->show();
-    });
-    connect(this->registerWindow, &RegisterWindow::registerSignal, this->netThread, &NetThread::registerSlot);
-    connect(this->netThread, &NetThread::getIdSignal, this->registerWindow, &RegisterWindow::getRegisterStatus);
-    connect(this->ui->LoginBtn, &QPushButton::clicked, this, [=](){
-        emit wantToLogin(ui->idText->text(), ui->pwdText->text());
-    });
-    connect(this, &MainWindow::wantToLogin, this->netThread, &NetThread::loginSlot);
-    qDebug() << "main conn end";
-    emit initNetThreadSocket();
-    emit initNetThreadSignal();
 }
 
 MainWindow::~MainWindow()
@@ -54,70 +18,80 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
-void MainWindow::getTokenSlot(QString _token){
-    this->token = _token;
-    qDebug()<< this->token;
-    QMessageBox message;
-    message.setText("login successfully");
-    message.exec();
-}
-
-void MainWindow::serverErrorSlot(QString err)
+void MainWindow::initGui()
 {
-    QMessageBox messageBox;
-    messageBox.setText(err);
-    messageBox.exec();
-    QApplication* app;
-    app->quit();
+    this->setDisabled(true);
 
 }
-void MainWindow::loginResSlot(bool res){
-    QMessageBox messageBox;
-    if(res){
-        messageBox.setText("legal res check true");
-        messageBox.exec();
-    }else{
-        messageBox.setText("legal res check false");
-        messageBox.exec();
-        QApplication* app;
-        app->quit();
-    }
-}
-void MainWindow::sendMsgSlot(QString err){
-    QMessageBox messageBox;
-    messageBox.setText(err);
-    messageBox.exec();
-    if(!this->checked){
-        QApplication* app;
-        app->quit();
-    }
-}
-void MainWindow::get0x103Msg(bool status, QString err)
+
+void MainWindow::initThread()
 {
-    QMessageBox messageBox;
-
-    messageBox.exec();
-    if(status){
-        messageBox.setText("success");
-        messageBox.exec();
-    }else{
-        messageBox.setText(err);
-        messageBox.exec();
-        if(!this->checked){
-            QApplication* app;
-            app->quit();
+    // 实例化子线程并启动
+    this->netThread = new NetThread();
+    QThread * thread = new QThread();
+    this->netThread->moveToThread(thread);
+    thread->start();
+    // 连接信号槽
+    connect(this, &MainWindow::initThreadSignal, this->netThread, &NetThread::initNetThread);
+    connect(this, &MainWindow::startLegalCheckSignal, this->netThread, &NetThread::startLegalCheckSlot);
+    connect(this->netThread, &NetThread::legalCheckResult, this, [=](int status, QString error){
+        QMessageBox box;
+        box.setText("状态码:" + QString::number(status) + "\t" + error);
+        box.exec();
+        if(status != 1){
+            QMessageBox isTry;
+            isTry.setText("是否重试?");
+            isTry.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+            isTry.setDefaultButton(QMessageBox::Yes);
+            int isYes = isTry.exec();
+            switch (isYes) {
+                case QMessageBox::No:{
+                    QApplication *app;
+                    app->exit();
+                }
+                default:{
+                    emit initThreadSignal();
+                }
+            }
+        }else{
+            this->setDisabled(false);
+            connect(this->netThread, &NetThread::connectBreakSignal, this, [=](){
+                QMessageBox isTry;
+                isTry.setText("连接断开!");
+                isTry.exec();
+                QApplication *app;
+                app->exit();
+            });
         }
+    });
+    connect(this->netThread, &NetThread::connectSuccessfully, this, [=](){
+        emit startLegalCheckSignal();
+    });
+    connect(this->netThread, &NetThread::userLoginResult, this, &MainWindow::loginResultSlots);
+    connect(this->ui->LoginBtn, &QPushButton::clicked, [=](){
+        int userid = ui->idText->text().toInt();
+        QString password = ui->pwdText->text();
+        emit userLogin(userid, password);
+
+    });
+    connect(this, &MainWindow::userLogin, this->netThread, &NetThread::userLogin);
+    // 初始化子线程，包括连接服务器，验证合法性
+    emit initThreadSignal();
+}
+
+void MainWindow::loginResultSlots(int status, bool isSuccess, QString error){
+    if(status != 0){
+        QMessageBox isTry;
+        isTry.setText("错误码：" + QString::number(status) + "\t" + error);
+        isTry.exec();
+        return;
     }
-}
-
-void MainWindow::get0x201Msg(QString id)
-{
-
-}
-
-void MainWindow::get0x301Msg(QString token)
-{
+    if(isSuccess){
+        this->token = error;
+        emit getFriendList();
+    }
 
 }
+
+
 

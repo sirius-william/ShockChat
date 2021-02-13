@@ -1,5 +1,5 @@
 {
-  "Name": "ZinxServerApp",
+  "Name": "ShockChat",
   "Version": "V0.11",
   "TcpPort": 8999,
   "Host": "127.0.0.1",
@@ -18,7 +18,7 @@
   "mysql.host": "127.0.0.1",
   "mysql.port": 3306,
   "mysql.username": "root",
-  "mysql.password": "jlsszcxt",
+  "mysql.password": "xxx",
   "mysql.charset": "utf8",
   "mysql.maxIdleSize": 2,
   "mysql.maxConnSize": 100,
@@ -26,9 +26,9 @@
   "privateKey": "private.pem",
   "token.key": "ShockChat",
   "token.minute": 30,
-  "mail.host": "smtp.163.com",
-  "mail.password": "LGMOPJUFRFXJVELP",
-  "mail.user": "a451541695@163.com",
+  "mail.host": "xxx",
+  "mail.password": "xxx",
+  "mail.user": "xxxx",
   "mail.name": "ShockChat",
   "mail.template":
     {

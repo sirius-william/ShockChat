@@ -43,7 +43,9 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_token_2eproto::offsets[] PROTO
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::protos::Token, status_),
   PROTOBUF_FIELD_OFFSET(::protos::Token, token_),
+  PROTOBUF_FIELD_OFFSET(::protos::Token, error_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::protos::Token)},
@@ -54,8 +56,9 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 };
 
 const char descriptor_table_protodef_token_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\013token.proto\022\006protos\"\026\n\005Token\022\r\n\005token\030"
-  "\001 \001(\014b\006proto3"
+  "\n\013token.proto\022\006protos\"5\n\005Token\022\016\n\006status"
+  "\030\001 \001(\005\022\r\n\005token\030\002 \001(\014\022\r\n\005error\030\003 \001(\tb\006pr"
+  "oto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_token_2eproto_deps[1] = {
 };
@@ -64,7 +67,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_tok
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_token_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_token_2eproto = {
-  false, false, descriptor_table_protodef_token_2eproto, "token.proto", 53,
+  false, false, descriptor_table_protodef_token_2eproto, "token.proto", 84,
   &descriptor_table_token_2eproto_once, descriptor_table_token_2eproto_sccs, descriptor_table_token_2eproto_deps, 1, 0,
   schemas, file_default_instances, TableStruct_token_2eproto::offsets,
   file_level_metadata_token_2eproto, 1, file_level_enum_descriptors_token_2eproto, file_level_service_descriptors_token_2eproto,
@@ -94,12 +97,20 @@ Token::Token(const Token& from)
     token_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_token(), 
       GetArena());
   }
+  error_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_error().empty()) {
+    error_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_error(), 
+      GetArena());
+  }
+  status_ = from.status_;
   // @@protoc_insertion_point(copy_constructor:protos.Token)
 }
 
 void Token::SharedCtor() {
   ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_Token_token_2eproto.base);
   token_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  error_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  status_ = 0;
 }
 
 Token::~Token() {
@@ -111,6 +122,7 @@ Token::~Token() {
 void Token::SharedDtor() {
   GOOGLE_DCHECK(GetArena() == nullptr);
   token_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  error_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void Token::ArenaDtor(void* object) {
@@ -135,6 +147,8 @@ void Token::Clear() {
   (void) cached_has_bits;
 
   token_.ClearToEmpty();
+  error_.ClearToEmpty();
+  status_ = 0;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -145,11 +159,27 @@ const char* Token::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::inte
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     CHK_(ptr);
     switch (tag >> 3) {
-      // bytes token = 1;
+      // int32 status = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          status_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // bytes token = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
           auto str = _internal_mutable_token();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string error = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
+          auto str = _internal_mutable_error();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "protos.Token.error"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -181,10 +211,26 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // bytes token = 1;
+  // int32 status = 1;
+  if (this->status() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_status(), target);
+  }
+
+  // bytes token = 2;
   if (this->token().size() > 0) {
     target = stream->WriteBytesMaybeAliased(
-        1, this->_internal_token(), target);
+        2, this->_internal_token(), target);
+  }
+
+  // string error = 3;
+  if (this->error().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_error().data(), static_cast<int>(this->_internal_error().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "protos.Token.error");
+    target = stream->WriteStringMaybeAliased(
+        3, this->_internal_error(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -203,11 +249,25 @@ size_t Token::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // bytes token = 1;
+  // bytes token = 2;
   if (this->token().size() > 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
         this->_internal_token());
+  }
+
+  // string error = 3;
+  if (this->error().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_error());
+  }
+
+  // int32 status = 1;
+  if (this->status() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_status());
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -244,6 +304,12 @@ void Token::MergeFrom(const Token& from) {
   if (from.token().size() > 0) {
     _internal_set_token(from._internal_token());
   }
+  if (from.error().size() > 0) {
+    _internal_set_error(from._internal_error());
+  }
+  if (from.status() != 0) {
+    _internal_set_status(from._internal_status());
+  }
 }
 
 void Token::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
@@ -268,6 +334,8 @@ void Token::InternalSwap(Token* other) {
   using std::swap;
   _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
   token_.Swap(&other->token_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+  error_.Swap(&other->error_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+  swap(status_, other->status_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata Token::GetMetadata() const {

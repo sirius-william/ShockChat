@@ -70,6 +70,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_Register_2eproto::offsets[] PR
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::protos::UserId, id_),
+  PROTOBUF_FIELD_OFFSET(::protos::UserId, error_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::protos::UserRegisterInfo)},
@@ -84,8 +85,8 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 const char descriptor_table_protodef_Register_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\016Register.proto\022\006protos\"N\n\020UserRegister"
   "Info\022\020\n\010password\030\001 \001(\014\022\013\n\003tel\030\002 \001(\014\022\014\n\004n"
-  "ame\030\003 \001(\014\022\r\n\005email\030\004 \001(\014\"\024\n\006UserId\022\n\n\002id"
-  "\030\001 \001(\003b\006proto3"
+  "ame\030\003 \001(\014\022\r\n\005email\030\004 \001(\014\"#\n\006UserId\022\n\n\002id"
+  "\030\001 \001(\003\022\r\n\005error\030\002 \001(\tb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_Register_2eproto_deps[1] = {
 };
@@ -95,7 +96,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_Reg
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_Register_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Register_2eproto = {
-  false, false, descriptor_table_protodef_Register_2eproto, "Register.proto", 134,
+  false, false, descriptor_table_protodef_Register_2eproto, "Register.proto", 149,
   &descriptor_table_Register_2eproto_once, descriptor_table_Register_2eproto_sccs, descriptor_table_Register_2eproto_deps, 2, 0,
   schemas, file_default_instances, TableStruct_Register_2eproto::offsets,
   file_level_metadata_Register_2eproto, 2, file_level_enum_descriptors_Register_2eproto, file_level_service_descriptors_Register_2eproto,
@@ -420,11 +421,18 @@ UserId::UserId(::PROTOBUF_NAMESPACE_ID::Arena* arena)
 UserId::UserId(const UserId& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  error_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_error().empty()) {
+    error_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_error(), 
+      GetArena());
+  }
   id_ = from.id_;
   // @@protoc_insertion_point(copy_constructor:protos.UserId)
 }
 
 void UserId::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_UserId_Register_2eproto.base);
+  error_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   id_ = PROTOBUF_LONGLONG(0);
 }
 
@@ -436,6 +444,7 @@ UserId::~UserId() {
 
 void UserId::SharedDtor() {
   GOOGLE_DCHECK(GetArena() == nullptr);
+  error_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void UserId::ArenaDtor(void* object) {
@@ -459,6 +468,7 @@ void UserId::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  error_.ClearToEmpty();
   id_ = PROTOBUF_LONGLONG(0);
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -474,6 +484,15 @@ const char* UserId::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::int
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
           id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string error = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          auto str = _internal_mutable_error();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "protos.UserId.error"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -511,6 +530,16 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(1, this->_internal_id(), target);
   }
 
+  // string error = 2;
+  if (this->error().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_error().data(), static_cast<int>(this->_internal_error().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "protos.UserId.error");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_error(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -526,6 +555,13 @@ size_t UserId::ByteSizeLong() const {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
+
+  // string error = 2;
+  if (this->error().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_error());
+  }
 
   // int64 id = 1;
   if (this->id() != 0) {
@@ -565,6 +601,9 @@ void UserId::MergeFrom(const UserId& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (from.error().size() > 0) {
+    _internal_set_error(from._internal_error());
+  }
   if (from.id() != 0) {
     _internal_set_id(from._internal_id());
   }
@@ -591,6 +630,7 @@ bool UserId::IsInitialized() const {
 void UserId::InternalSwap(UserId* other) {
   using std::swap;
   _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
+  error_.Swap(&other->error_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
   swap(id_, other->id_);
 }
 

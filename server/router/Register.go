@@ -40,10 +40,10 @@ func (r *RegisterRouter) Handle(req ziface.IRequest) {
 		logger.Log.Error(err.Error())
 		return
 	}
-	userNameBytes, _ := utils.Decrypt(registerInfo.Name, utils.KeyFile.PrivateKeyFilePath)
-	passwordBytes, _ := utils.Decrypt(registerInfo.Password, utils.KeyFile.PrivateKeyFilePath)
-	telBytes, _ := utils.Decrypt(registerInfo.Tel, utils.KeyFile.PrivateKeyFilePath)
-	emailBytes, _ := utils.Decrypt(registerInfo.Email, utils.KeyFile.PrivateKeyFilePath)
+	userNameBytes, _ := utils.Decrypt(registerInfo.Name)
+	passwordBytes, _ := utils.Decrypt(registerInfo.Password)
+	telBytes, _ := utils.Decrypt(registerInfo.Tel)
+	emailBytes, _ := utils.Decrypt(registerInfo.Email)
 	username := string(userNameBytes)
 	password := string(passwordBytes)
 	tel := string(telBytes)

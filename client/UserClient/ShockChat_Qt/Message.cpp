@@ -3,7 +3,7 @@
 #include <QByteArray>
 #include <QList>
 #include "Message.hpp"
-QByteArray packMsg(int id, QByteArray data){
+QByteArray packMsg(int id, QByteArray data = nullptr){
     QByteArray ba;
     ba.resize(8);
     int length = 0;
@@ -34,7 +34,7 @@ QList<int> unpackMsg(QByteArray head){
     id |= ((head[6] << 16) & 0x00FF0000);
     id |= ((head[7] << 24) & 0xFF000000);
     QList<int> res;
-    res << length << id;
+    res << id << length;
     return res;
 }
 #endif // MESSAGE_HPP

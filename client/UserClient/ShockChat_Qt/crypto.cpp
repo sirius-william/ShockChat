@@ -1,4 +1,5 @@
 #include "crypto.h"
+#include <QCryptographicHash>
 using namespace std;
 // 加密
 std::string Encrypto(const std::string &publicFileName, const std::string &clear_text){
@@ -45,7 +46,6 @@ std::string Encrypto(const std::string &publicFileName, const std::string &clear
 	BIO_free_all(in);
 	RSA_free(rsa);
 	delete[] sub_text;
- 
 	return encrypt_text;
 
 };
@@ -92,3 +92,11 @@ std::string Decrypto(const std::string &privateFileName, const std::string &ciph
 	return decrypt_text;
 
 };
+
+QString Riddle(QString salt)
+{
+    QString saltMd5;
+    QCryptographicHash md(QCryptographicHash::Md5);
+    saltMd5 = QCryptographicHash::hash (salt.toLatin1(), QCryptographicHash::Md5).toHex();
+    return saltMd5;
+}
